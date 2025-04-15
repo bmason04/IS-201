@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Restaurant Generator</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #fff0f5;
+      text-align: center;
+      padding: 40px;
+      color: #8b008b;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-family: 'Pacifico', cursive;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin-top: 30px;
+      font-weight: 600;
+    }
+
+    .options {
+      margin: 10px 0 30px 0;
+    }
+
+    button {
+      background-color: #ff69b4;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 1rem;
+      margin: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #ff1493;
+    }
+
+    button.selected {
+      background-color: #c71585;
+      box-shadow: 0 0 10px rgba(255, 20, 147, 0.7);
+    }
+
+    .result {
+      font-size: 1.5rem;
+      margin-top: 30px;
+      background-color: #ffe6f0;
+      padding: 20px;
+      border-radius: 12px;
+      display: inline-block;
+      min-width: 300px;
+    }
+
+    /* ✨ Sparkle Animation */
+    @keyframes sparkle-pop {
+      0% {
+        transform: scale(0.9);
+        opacity: 0;
+        text-shadow: 0 0 0 hotpink;
+      }
+      50% {
+        transform: scale(1.05);
+        opacity: 1;
+        text-shadow: 0 0 10px #ff69b4, 0 0 20px #ffc0cb;
+      }
+      100% {
+        transform: scale(1);
+        text-shadow: 0 0 5px #ff69b4;
+      }
+    }
+
+    .sparkle {
+      animation: sparkle-pop 0.8s ease-out;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🍽 Restaurant Generator 🍽</h1>
+
+  <h2>What kind of food are you craving?</h2>
+  <div class="options" id="food-options">
+    <button onclick="selectFood(this, 'Pizza')">🍕 Pizza</button>
+    <button onclick="selectFood(this, 'Sushi')">🍣 Sushi</button>
+    <button onclick="selectFood(this, 'Burgers')">🍔 Burgers</button>
+    <button onclick="selectFood(this, 'Tacos')">🌮 Tacos</button>
+    <button onclick="selectFood(this, 'Fancy')">🥩 Fancy Food</button>
+    <button onclick="selectFood(this, 'Fast Food')">🚗 Fast Food</button>
+  </div>
+
+  <h2>What’s your budget?</h2>
+  <div class="options" id="budget-options">
+    <button onclick="selectBudget(this, '$')">$ (Cheap)</button>
+    <button onclick="selectBudget(this, '$$')">$$ (Moderate)</button>
+    <button onclick="selectBudget(this, '$$$')">$$$ (Fancy)</button>
+  </div>
+
+  <button onclick="generateRestaurant()">🎉 Find My Food 🎉</button>
+
+  <div class="result" id="result"></div>
+
+  <script>
+    let selectedFood = null;
+    let selectedBudget = null;
+
+    const restaurantOptions = {
+      Pizza: {
+        "$": ["Little Caesars", "Domino's"],
+        "$$": ["MOD Pizza", "Blaze Pizza"],
+        "$$$": ["Pizzeria Bianco", "Lucali"]
+      },
+      Sushi: {
+        "$": ["Wasabi Express", "Sushi Burrito"],
+        "$$": ["Sushi Garden", "Roll & Rock"],
+        "$$$": ["Nobu", "Uchi"]
+      },
+      Burgers: {
+        "$": ["McDonald's", "Wendy's"],
+        "$$": ["Five Guys", "Shake Shack"],
+        "$$$": ["Hopdoddy", "Gordon Ramsay Burger"]
+      },
+      Tacos: {
+        "$": ["Taco Bell", "Del Taco"],
+        "$$": ["Taco Time", "Cafe Rio"],
+        "$$$": ["Barrio Queen", "Tocaya Organica"]
+      },
+      Fancy: {
+        "$": ["Cheesecake Factory Lunch Menu", "Panera on a good day"],
+        "$$": ["Texas Roadhouse", "Olive Garden"],
+        "$$$": ["Ruth's Chris Steak House", "Fleming's", "Capital Grille"]
+      },
+      "Fast Food": {
+        "$": ["McDonald's", "Taco Bell", "Wendy's", "Jack in the Box"],
+        "$$": ["Chick-fil-A", "In-N-Out", "Raising Cane’s", "Zaxby’s"],
+        "$$$": ["Shake Shack", "Five Guys", "The Habit Burger Grill"]
+      }
+    };
+
+    function selectFood(button, food) {
+      selectedFood = food;
+
+      // Remove 'selected' class from all food buttons
+      const buttons = document.querySelectorAll('#food-options button');
+      buttons.forEach(btn => btn.classList.remove('selected'));
+
+      // Add 'selected' to the clicked one
+      button.classList.add('selected');
+      document.getElementById('result').innerText = '';
+    }
+
+    function selectBudget(button, budget) {
+      selectedBudget = budget;
+
+      // Remove 'selected' class from all budget buttons
+      const buttons = document.querySelectorAll('#budget-options button');
+      buttons.forEach(btn => btn.classList.remove('selected'));
+
+      // Add 'selected' to the clicked one
+      button.classList.add('selected');
+      document.getElementById('result').innerText = '';
+    }
+
+    function generateRestaurant() {
+      const resultDiv = document.getElementById('result');
+
+      if (!selectedFood || !selectedBudget) {
+        resultDiv.innerText = "Please select both a food type and a budget!";
+        resultDiv.classList.remove('sparkle');
+        return;
+      }
+
+      const options = restaurantOptions[selectedFood][selectedBudget];
+      const pick = options[Math.floor(Math.random() * options.length)];
+      resultDiv.innerText = `✨ You should go to: ⭐ ${pick} ⭐ ✨`;
+
+      // Sparkle animation (reset and re-trigger)
+      resultDiv.classList.remove('sparkle');
+      void resultDiv.offsetWidth; // trigger reflow
+      resultDiv.classList.add('sparkle');
+
+      // Reset selections
+      selectedFood = null;
+      selectedBudget = null;
+
+      const foodButtons = document.querySelectorAll('#food-options button');
+      const budgetButtons = document.querySelectorAll('#budget-options button');
+      foodButtons.forEach(btn => btn.classList.remove('selected'));
+      budgetButtons.forEach(btn => btn.classList.remove('selected'));
+    }
+  </script>
+
+</body>
+</html>
